@@ -11,8 +11,8 @@ var services = angular.module('myApp.services', []).
 
 services.factory('dependencyLoader',
     [
-      '$q', '$log', '$timeout',
-      function($q, $log, $timeout) {
+      '$q', '$log', '$rootScope',
+      function($q, $log, $rootScope) {
         var loader = { };
 
         function argumentsToArray(args) {
@@ -33,10 +33,9 @@ services.factory('dependencyLoader',
 
               $log.info('loaded scripts in ' + (endTime - startTime));
               
-              // not sure why this is needed, but it looks like 
-              // nextTick doesn't get called without it so the 
-              // resolution doesn't got through
-              $timeout(function() {
+              // according to https://groups.google.com/forum/#!topic/angular/9YhZOZISHrU
+              // this is the accepted way to do this. gnarly.
+              $rootScope.$apply(function() {
                 deferred.resolve(modules);
               });
             });
